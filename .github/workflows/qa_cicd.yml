@@ -29,6 +29,7 @@ jobs:
         with:
             name: my first git leaks report
             path: gitleaks-report.json
+            if-no-files-found: warn
     
     
   
