@@ -6,7 +6,30 @@ on:
    paths: 
      - client/**
      - server/**
-     - .github/workflows/Qa_cicd.yml
+     - .github/workflows/qa_cicd.yml
 jobs:
+  gitLeaks_scan:
+    name : Gitleaks scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: cloning the repository
+        uses: actions/checkout@v4
+      - name: git leaks scan
+        run: |
+         docker run --rm -v "${{github.workspace}}:/repo" \
+         zricethezav/gitleaks:latest detect \
+         --source=/repo \
+         --report-format=json \
+         --report-path= gitleaks-report.json \
+         --redact \
+         --exit-code 0
+         steps:
+      - name: git leaks upload file
+        uses: actions/upload-artifact@v7
+        with:
+            name: my first git leaks report
+            path: gitleaks-report.json
+    
+    
   
       
