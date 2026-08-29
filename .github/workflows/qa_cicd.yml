@@ -1,0 +1,12 @@
+name: devsecops with cicdpipeline
+on: 
+  push:
+   branches:
+    - qa
+   paths: 
+     - client/**
+     - server/**
+     - .github/workflows/Qa_cicd.yml
+jobs:
+  
+      
