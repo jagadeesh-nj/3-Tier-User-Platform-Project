@@ -20,7 +20,7 @@ jobs:
          zricethezav/gitleaks:latest detect \
          --source=/repo \
          --report-format=json \
-         --report-path= gitleaks-report.json \
+         --report-path=/repo/gitleaks-report.json \
          --redact \
          --exit-code 0
       - name: git leaks upload file
