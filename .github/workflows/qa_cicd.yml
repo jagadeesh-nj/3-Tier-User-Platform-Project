@@ -110,14 +110,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: gitleaks-scan
     steps:
-      - name: checkout source code
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Manual Trivy Setup
-        uses: aquasecurity/setup-trivy@v0.2.0
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.6
         with:
+          version: latest
           cache: true
-          version: v0.74.0
       - name: Verify Trivy installation
         run: |
           trivy --version
