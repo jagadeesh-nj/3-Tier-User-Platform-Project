@@ -105,5 +105,53 @@ jobs:
           path: checkov-dockerfile-report.json
           if-no-files-found: warn            
     
+  client-trivyScan:
+    name: scan the dependencies
+    runs-on: ubuntu-latest
+    needs: gitleaks-scan
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v4
+
+      - name: Manual Trivy Setup
+        uses: aquasecurity/setup-trivy@v0.2.0
+        with:
+          cache: true
+          version: v0.74.0
+      - name: Verify Trivy installation
+        run: |
+          trivy --version
+          which trivy
+      
+      - name: Run Trivy FS scan on client (JSON)
+        run: |
+          trivy fs ./client \
+            --format json \
+            --output client-trivy-fs-report.json \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 0
+
+      - name: Run Trivy FS scan on client (TABLE)
+        run: |
+          trivy fs ./client \
+            --format table \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 0 > client-trivy-fs-report.txt    
   
+      - name: Upload Client Trivy JSON report
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-trivy-fs-json-report
+          path: client-trivy-fs-report.json
+          if-no-files-found: warn
+
+      - name: Upload Client Trivy TABLE report
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-trivy-fs-table-report
+          path: client-trivy-fs-report.txt
+          if-no-files-found: warn
+     
       
