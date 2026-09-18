@@ -1,5 +1,6 @@
 name: devsecops with cicdpipeline
 on: 
+
   workflow_dispatch: 
   push:
    branches:
