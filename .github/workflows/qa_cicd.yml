@@ -8,6 +8,7 @@ on:
      - client/**
      - server/**
      - .github/workflows/qa_cicd.yml
+     - Dockerfile
 jobs:
   gitleaks-scan:
     name : Gitleaks scan
