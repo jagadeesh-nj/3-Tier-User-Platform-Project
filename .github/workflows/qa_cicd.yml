@@ -154,6 +154,120 @@ jobs:
           name: client-trivy-fs-table-report
           path: client-trivy-fs-report.txt
           if-no-files-found: warn
+  client-lint:
+    name: Client Lint
+    runs-on: ubuntu-latest
+    needs:
+      - checkov-k8s
+      - checkov-dockerfile
+      - checkov-terraform
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        run: npm ci
+
+      - name: Run client lint
+        run: npm run lint --if-present
+        continue-on-error: true
+
+  server-lint:
+    name: Server Lint
+    runs-on: ubuntu-latest
+    needs:
+      - checkov-k8s
+      - checkov-dockerfile
+      - checkov-terraform
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        run: npm ci
+
+      - name: Run server lint
+        run: npm run lint --if-present
+        continue-on-error: true
+
+
+  client-test:
+    name: Client Test
+    runs-on: ubuntu-latest
+    needs: client-lint
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        run: npm ci
+
+      - name: Run client tests
+        run: npm test --if-present
+        continue-on-error: true
+
+  server-test:
+    name: Server Test
+    runs-on: ubuntu-latest
+    needs: server-lint
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        run: npm ci
+
+      - name: Run server tests
+        run: npm test --if-present
+        continue-on-error: true        
           
   sonarqube:
       name: sonarQube-qualityGatesCheck
@@ -181,6 +295,32 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
+  client-build:
+    name: Client Build
+    runs-on: ubuntu-latest
+    needs: client-test
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        run: npm ci
+
+      - name: Build client
+        run: npm run build --if-present
+        
   docker:
     name: docker build and push
     needs: 
