@@ -11,8 +11,6 @@ COPY /server/package*.json ./
 RUN npm install --omit=dev
 COPY server/ ./
 
-RUN mkdir -p ./public && cp -R /usr/src/app/client/public/* ./public/
-
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 RUN chown -R appuser:appgroup /usr/src/app
 
