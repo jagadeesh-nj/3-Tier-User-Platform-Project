@@ -9,6 +9,8 @@ on:
      - server/**
      - .github/workflows/qa_cicd.yml
      - Dockerfile
+permissions:
+  id-token: write    
 jobs:
   gitleaks-scan:
     name : Gitleaks scan
@@ -387,6 +389,23 @@ jobs:
           tags: |
             njagadee/node-app:${{ github.sha }}
             njagadee/node-app:latest       
+
+  run_job_with_aws_OIDC:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLEE }}
+          aws-region: 
+      - name: Additional steps
+        run: |
+          # Your commands that require AWS credentials
+          aws sts get-caller-identity    
+
+            
              
      
       
