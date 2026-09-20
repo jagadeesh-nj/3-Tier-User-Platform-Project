@@ -10,7 +10,7 @@ on:
      - .github/workflows/qa_cicd.yml
      - Dockerfile
 permissions:
-  contents: write
+  contents: read
   id-token: write 
 jobs:
   gitleaks-scan:
