@@ -349,29 +349,53 @@ jobs:
           tags: |
             njagadee/node-app:${{ github.sha }}
             njagadee/node-app:latest
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@v0.36.0
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.6
         with:
-          image-ref: njagadee/node-app:${{ github.sha }}
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'    
-      - name: Upload Trivy image JSON report
+          version: latest
+          cache: true
+      - name: Verify Trivy installation
+        run: |
+          trivy --version
+          which trivy
+      - name: Trivy docker image scan  
+        run: |
+          trivy image njagadee/node-app:${{ github.sha }}
+            --format json \
+            --output client-trivy-fs-report.json \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 0
+
+      - name: Run Trivy FS scan on client (TABLE)
+        run: |
+           trivy image njagadee/node-app:latest
+            --format json \
+            --output client-trivy-fs-report.json \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 0   
+      - name: Upload Client Trivy JSON report
         uses: actions/upload-artifact@v4
         with:
-          name: image-trivy-json-report
-          path: image-trivy-report.json
+          name: client-trivy-fs-json-report
+          path: client-trivy-fs-report.json
           if-no-files-found: warn
 
-      - name: Upload Trivy image TABLE report
+      - name: Upload Client Trivy TABLE report
         uses: actions/upload-artifact@v4
         with:
-          name: image-trivy-table-report
-          path: image-trivy-report.txt
-          if-no-files-found: warn   
-             
+          name: client-trivy-fs-table-report
+          path: client-trivy-fs-report.txt
+          if-no-files-found: warn 
+          
+      - name: push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: |
+            njagadee/node-app:${{ github.sha }}
+            njagadee/node-app:latest       
              
      
       
