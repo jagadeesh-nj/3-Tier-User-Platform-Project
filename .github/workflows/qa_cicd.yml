@@ -360,33 +360,24 @@ jobs:
           which trivy
       - name: Trivy docker image scan  
         run: |
-          trivy image njagadee/node-app:${{ github.sha }}
+          trivy image \
             --format json \
             --output client-trivy-fs-report.json \
             --severity HIGH,CRITICAL \
             --ignore-unfixed \
             --exit-code 0
-
-      - name: Run Trivy FS scan on client (TABLE)
-        run: |
-           trivy image njagadee/node-app:latest
-            --format json \
-            --output client-trivy-fs-report.json \
-            --severity HIGH,CRITICAL \
-            --ignore-unfixed \
-            --exit-code 0   
-      - name: Upload Client Trivy JSON report
+      - name: Upload  Trivy image JSON report
         uses: actions/upload-artifact@v4
         with:
-          name: client-trivy-fs-json-report
-          path: client-trivy-fs-report.json
+          name: client-trivy-image-json-report
+          path: client-trivy-image-report.json
           if-no-files-found: warn
 
-      - name: Upload Client Trivy TABLE report
+      - name: Upload Trivy image TABLE report
         uses: actions/upload-artifact@v4
         with:
-          name: client-trivy-fs-table-report
-          path: client-trivy-fs-report.txt
+          name: client-trivy-image-table-report
+          path: client-trivy-image-report.txt
           if-no-files-found: warn 
           
       - name: push
