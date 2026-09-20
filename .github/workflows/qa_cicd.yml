@@ -360,7 +360,7 @@ jobs:
           which trivy
       - name: Trivy docker image scan  
         run: |
-          trivy image \
+          trivy image njagadee/node-app:${{ github.sha }} \
             --format json \
             --output client-trivy-fs-report.json \
             --severity HIGH,CRITICAL \
