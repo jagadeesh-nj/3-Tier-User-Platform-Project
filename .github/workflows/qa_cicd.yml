@@ -399,7 +399,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v6.3.0
         with:
           role-to-assume: ${{ secrets.AWS_IAM_ROLEE }}
-          aws-region: 
+          aws-region: ap-south-1
       - name: Additional steps
         run: |
           # Your commands that require AWS credentials
